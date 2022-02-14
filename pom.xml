@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!-- 声明规范 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <!-- pom模型版本，maven2和3只能为4.0.0 -->
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.xkcoding</groupId>
   <artifactId>spring-boot-demo</artifactId>
   <version>1.0.0-SNAPSHOT</version>
+  <!--  项目打包方式，有以下值：pom, jar, maven-plugin, ejb, war, ear, rar, par-->
+  <packaging>pom</packaging>
+  <!--  当前项目所包含的所有模块-->
   <modules>
     <module>demo-helloworld</module>
     <module>demo-properties</module>
@@ -71,12 +75,22 @@
     <module>demo-flyway</module>
     <module>demo-pay</module>
   </modules>
-  <packaging>pom</packaging>
 
   <name>spring-boot-demo</name>
   <url>http://xkcoding.com</url>
 
+  <!--  用于确定父项目的坐标位置。-->
+  <!--  <parent>-->
+  <!--    <groupId>com.xx</groupId>-->
+  <!--    <artifactId>SIP-parent</artifactId>-->
+  <!--  Maven首先在当前项目中找父项目的pom，然后在文件系统的这个位置（relativePath），然后在本地仓库，再在远程仓库找。 -->
+  <!--    <relativePath></relativePath>-->
+  <!--    <version>0.0.1-SNAPSHOT</version>-->
+  <!--  </parent>-->
+
+  <!--  用于定义pom常量-->
   <properties>
+    <!--    这个常量可以在pom文件的任意地方通过${xx.xx}来引用-->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>1.8</java.version>
@@ -89,20 +103,37 @@
     <user.agent.version>1.20</user.agent.version>
   </properties>
 
+  <!-- 依赖和扩展的远程仓库列表 -->
   <repositories>
     <repository>
       <id>aliyun</id>
       <name>aliyun</name>
       <url>https://maven.aliyun.com/repository/public</url>
+      <!--   releases, snapshots:这是各种构件的策略   POM就可以根据独立仓库任意类型的依赖改变策略-->
       <releases>
         <enabled>true</enabled>
+        <!--updatePolicy: 这个元素决定更新频率。maven将比较本地pom的时间戳（存储在仓库的maven数据文件中）和远程的.
+            有以下选择: always, daily (默认), interval:X (x是代表分钟的整型) ， never.-->
+        <!--        <updatePolicy>never</updatePolicy>-->
+        <!-- checksumPolicy：当Maven向仓库部署文件的时候，它也部署了相应的校验和文件。
+        可选的为：ignore，fail，warn，或者不正确的校验和-->
+        <!--        <checksumPolicy>fail</checksumPolicy>-->
       </releases>
       <snapshots>
         <enabled>false</enabled>
+        <!--        <updatePolicy>never</updatePolicy>-->
+        <!--        <checksumPolicy>fail</checksumPolicy>-->
       </snapshots>
     </repository>
   </repositories>
 
+  <!--
+   1、<dependencyManagement><dependencies>......</dependencies></dependencyManagement>
+   在父模块中定义后，子模块不会直接使用对应依赖，但是在使用相同依赖的时候可以不加版本号,
+   这样的好处是，父项目统一了版本，而且子项目可以在需要的时候才引用对应的依赖。
+   2、<dependencies>......<dependencies/>
+   父项目直接使用dependencies管理依赖，如果在父项目写的依赖，会被子项目引用。一般会在父项目中定义子项目中所有共用的依赖。
+   -->
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -139,11 +170,21 @@
   </dependencyManagement>
 
   <build>
+    <!--子项目可以引用的默认插件信息。该插件配置项直到被引用时才会被解析或绑定到生命周期。给定插件的任何本地配置都会覆盖这里的配置-->
     <pluginManagement>
+      <!--使用的插件列表 。-->
       <plugins>
+        <!--plugin元素包含描述插件所需要的信息。-->
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.0.0</version>
+          <!--          &lt;!&ndash;项目引入插件所需要的额外依赖&ndash;&gt;-->
+          <!--          <dependencies>-->
+          <!--            &lt;!&ndash;参见dependencies/dependency元素&ndash;&gt;-->
+          <!--            <dependency>-->
+          <!--              ......-->
+          <!--            </dependency>-->
+          <!--          </dependencies>-->
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
