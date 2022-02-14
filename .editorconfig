@@ -1,4 +1,5 @@
 # 开发组IDE 编辑器标准
+# editorconfig是用于跨不同的编辑器和IDE为多个开发人员维护一致的编码风格的配置文件
 root = true
 
 [*]
